@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <title>Fitness Journal</title>
+</head>
+<body>
+  <!-- NavBar -->
+  <nav>
+    <div class="nav-wrapper red">
+      <div class="container">
+        <a class="brand-logo center">Fitness Journal</a>
+      </div>
+    </div>
+  </nav>
+
+  <br>
+
+  <div class="container">
+      <!-- Form Card - Date-->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Add a Date</span>
+          <form class="col">
+            <div class="row">
+              <div class="input-field col s12">
+                <input type="date" placeholder="Add a Date" id="fitness-date">
+                <label for="fitness-date">Date</label>
+              </div>
+              <button class="add-btn btn blue darken-3"><i class="fa fa-plus"></i> Add Date</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Form Card - Meal/Exercise -->
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Add Meal</span>
+          <form class="col">
+            <div class="row">
+              <div class="input-field col s6">
+                <input type="text" placeholder="Add Food/Meal" id="meal-name">
+                <label for="meal-name">Meal</label>
+              </div>
+              <div class="input-field col s6">
+                <input type="number" placeholder="Add Calories" id="meal-calories">
+                <label for="meal-calories">Calories</label>
+              </div>
+              <button class="add-btn btn blue darken-3"><i class="fa fa-plus"></i> Add Meal</button>
+              <button class="update-btn btn orange"><i class="far fa-edit"></i> Update Meal</button>
+              <button class="delete-btn btn red"><i class="far fa-minus-square"></i> Delete Meal</button>
+              <button class="back-btn btn grey pull-right"><i class="fas fa-chevron-circle-left"></i> Back</button>
+            </div>
+          </form>
+          <span class="card-title">Add Exercise</span>
+          <form class="col">
+            <div class="row">
+              <div class="input-field col s6">
+                <input type="text" placeholder="Add Food/Meal" id="exercise-name">
+                <label for="exercise-name">Exercise</label>
+              </div>
+              <div class="input-field col s6">
+                <input type="number" placeholder="Add Calories" id="exercise-calories">
+                <label for="exercise-calories">Calories</label>
+              </div>
+              <button class="add-btn btn blue darken-3"><i class="fa fa-plus"></i> Add Exercise</button>
+              <button class="update-btn btn orange"><i class="far fa-edit"></i> Update Exercise</button>
+              <button class="delete-btn btn red"><i class="far fa-minus-square"></i> Delete Exercise</button>
+              <button class="back-btn btn grey pull-right"><i class="fas fa-chevron-circle-left"></i> Back</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Calorie Count -->
+      <h3 class="center-align">Total Calories: <span class="total-calories">0</span></h3>
+  
+      <!-- Item-List -->
+      <h5 class="left-align">Date Log: <span class="date-log">01/11/2019</span></h5>
+      <ul id="item-list" class="collection">
+        <li class="collection-item" id="item-0">
+          <strong>Steak Dinner: </strong> <em>1200 Calories</em>
+          <a href="#" class="secondary-content">
+            <i class="fas fa-pencil-alt"></i>
+          </a>
+        </li>
+        <li class="collection-item" id="item-0">
+          <strong>Cookie: </strong> <em>400 Calories</em>
+          <a href="#" class="secondary-content">
+            <i class="fas fa-pencil-alt"></i>
+          </a>
+        </li>
+        <li class="collection-item" id="item-0">
+          <strong>Eggs: </strong> <em>300 Calories</em>
+          <a href="#" class="secondary-content">
+            <i class="fas fa-pencil-alt"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+
+
+
+
+
+
+
+  <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
