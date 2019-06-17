@@ -37,11 +37,11 @@ const MealCtrl = (function() {
 
       calories = parseInt(calories)
 
-      newItem = new Meal(ID, name, calories)
+      newMealItem = new Meal(ID, name, calories)
 
-      data.meals.push(newItem)
+      data.meals.push(newMealItem)
 
-      return newItem
+      return newMealItem
     }
   }
 
@@ -54,12 +54,47 @@ const ExerciseCtrl = (function() {
     this.calories = calories;
   }
 
+  const data = {
+    exercises: [
+      {id: 0, name: 'Running', calories: 200},
+      {id: 1, name: 'Deadlifts', calories: 400},
+      {id: 2, name: 'Boxing', calories: 500}
+    ],
+    currentExercise: null,
+    totalCalories: 0
+  }
+
+  return {
+    getExercises: function() {
+      return data.exercises
+    },
+
+    addExercise: function(name, calories) {
+      let ID
+
+      if(data.exercises.length > 0) {
+        ID = data.exercises[data.exercises.length - 1].id + 1;
+      } else {
+        ID = 0;
+      }
+
+      calories = parseInt(calories)
+
+      newExerciseItem = new Exercise(ID, name, calories)
+
+      data.exercises.push(newExerciseItem)
+
+      return newExerciseItem
+    }
+  }
+
 })();
 
 // UI Controller
 const UICtrl = (function() {
   const Selectors = {
-    itemsList: '#item-list',
+    mealItemsList: '#meal-item-list',
+    exerciseItemsList: '#exercise-item-list',
     listItems: '#item-list li',
     addDateBtn: '.add-btn.date',
     addMealBtn: '.add-btn-meal',
@@ -80,7 +115,7 @@ const UICtrl = (function() {
   }
 
   return {
-    populateItemsList: function(items) {
+    populateMealItemsList: function(items) {
       let html = '';
 
       items.forEach((item) => {
@@ -91,7 +126,22 @@ const UICtrl = (function() {
         </a>
       </li>`;
 
-      document.querySelector(Selectors.itemsList).innerHTML = html
+      document.querySelector(Selectors.mealItemsList).innerHTML = html
+      })
+    },
+
+    populateExerciseItemsList: function(items) {
+      let html = '';
+
+      items.forEach((item) => {
+        html += `<li class="collection-item" id="item-${item.id}">
+        <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
+        <a href="#" class="secondary-content">
+          <i class="edit-item fas fa-pencil-alt"></i>
+        </a>
+      </li>`;
+
+      document.querySelector(Selectors.exerciseItemsList).innerHTML = html
       })
     },
 
@@ -102,8 +152,15 @@ const UICtrl = (function() {
       }
     },
 
-    addListItem: function(item) {
-      document.querySelector(Selectors.itemsList).getElementsByClassName.display = 'block';
+    getExerciseInput: function() {
+      return{
+        name: document.querySelector(Selectors.exerciseNameInput).value,
+        calories: document.querySelector(Selectors.exerciseCaloriesInput).value
+      }
+    },
+
+    addListMeal: function(item) {
+      document.querySelector(Selectors.mealItemsList).getElementsByClassName.display = 'block';
 
       const li = document.createElement('li');
 
@@ -116,7 +173,24 @@ const UICtrl = (function() {
         <i class="edit-item fas fa-pencil-alt"></i>
       </a>`
 
-      document.querySelector(Selectors.itemsList).insertAdjacentElement('beforeend', li)
+      document.querySelector(Selectors.mealItemsList).insertAdjacentElement('beforeend', li)
+    },
+
+    addListExercise: function(item) {
+      document.querySelector(Selectors.exerciseItemsList).getElementsByClassName.display = 'block';
+
+      const li = document.createElement('li');
+
+      li.className = 'collection-item';
+
+      li.id = `item-${item.id}`;
+
+      li.innerHTML = `<strong>${item.name}: </strong> <em>${item.calories} Calories</em>
+      <a href="#" class="secondary-content">
+        <i class="edit-item fas fa-pencil-alt"></i>
+      </a>`
+
+      document.querySelector(Selectors.exerciseItemsList).insertAdjacentElement('beforeend', li)
     }
   }
 
@@ -126,6 +200,7 @@ const UICtrl = (function() {
 const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
   const loadEventListeners = function() {
     document.querySelector('.add-btn-meal').addEventListener('click', addMealSubmit)
+    document.querySelector('.add-btn-exercise').addEventListener('click', addExerciseSubmit)
   }
 
   const addMealSubmit = function(e) {
@@ -134,22 +209,35 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
     if(input.name !== '' && input.calories !== '') {
       const newMeal = MealCtrl.addMeal(input.name, input.calories)
 
-      console.log(newMeal)
-
-      UICtrl.addListItem(newMeal)
+      UICtrl.addListMeal(newMeal)
 
     }
 
     e.preventDefault()
   }
 
+  const addExerciseSubmit = function(e) {
+    const input = UICtrl.getExerciseInput()
+
+    if(input.name !== '' && input.calories !== '') {
+      const newExercise = ExerciseCtrl.addExercise(input.name, input.calories)
+
+      UICtrl.addListExercise(newExercise)
+    }
+
+
+  }
+
 
   return {
     init: function() {
 
-      items = MealCtrl.getMeals()
+      meals = MealCtrl.getMeals()
+      exercise = ExerciseCtrl.getExercises()
 
-      UICtrl.populateItemsList(items)
+
+      UICtrl.populateMealItemsList(meals)
+      UICtrl.populateExerciseItemsList(exercise)
 
       loadEventListeners()
     }
