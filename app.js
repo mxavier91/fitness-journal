@@ -13,9 +13,9 @@ const MealCtrl = (function() {
 
   const data = {
     meals: [
-      {id: 0, name: 'Steak Dinner', calories: 1200},
-      {id: 1, name: 'Cookie', calories: 400},
-      {id: 2, name: 'Eggs', calories: 300}
+      // {id: 0, name: 'Steak Dinner', calories: 1200},
+      // {id: 1, name: 'Cookie', calories: 400},
+      // {id: 2, name: 'Eggs', calories: 300}
     ],
     currentMeal: null,
     totalCalories: 0
@@ -42,6 +42,18 @@ const MealCtrl = (function() {
       data.meals.push(newMealItem)
 
       return newMealItem
+    },
+
+    getTotalCalories: function() {
+      let total = 0;
+
+      data.meals.forEach((meal) => {
+        total += meal.calories;
+      });
+
+      data.totalCalories = total
+
+      return data.totalCalories;
     }
   }
 
@@ -56,9 +68,9 @@ const ExerciseCtrl = (function() {
 
   const data = {
     exercises: [
-      {id: 0, name: 'Running', calories: 200},
-      {id: 1, name: 'Deadlifts', calories: 400},
-      {id: 2, name: 'Boxing', calories: 500}
+      // {id: 0, name: 'Running', calories: 200},
+      // {id: 1, name: 'Deadlifts', calories: 400},
+      // {id: 2, name: 'Boxing', calories: 500}
     ],
     currentExercise: null,
     totalCalories: 0
@@ -85,13 +97,25 @@ const ExerciseCtrl = (function() {
       data.exercises.push(newExerciseItem)
 
       return newExerciseItem
+    },
+
+    getTotalCalories: function() {
+      let total = 0;
+
+      data.exercises.forEach((exercise) => {
+        total += exercise.calories;
+      });
+
+      data.totalCalories = total
+
+      return data.totalCalories;
     }
   }
 
 })();
 
 // UI Controller
-const UICtrl = (function() {
+const UICtrl = (function(ExerciseCtrl, MealCtrl) {
   const Selectors = {
     mealItemsList: '#meal-item-list',
     exerciseItemsList: '#exercise-item-list',
@@ -111,7 +135,8 @@ const UICtrl = (function() {
     mealCaloriesInput: '#meal-calories',
     exerciseNameInput: '#exercise-name',
     exerciseCaloriesInput: '#exercise-calories',
-    fitnessDateInput: '#fitness-date'
+    fitnessDateInput: '#fitness-date',
+    totalCalories: '.total-calories'
   }
 
   return {
@@ -127,6 +152,7 @@ const UICtrl = (function() {
       </li>`;
 
       document.querySelector(Selectors.mealItemsList).innerHTML = html
+      document.querySelector(Selectors.exerciseItemsList).innerHTML = html
       })
     },
 
@@ -191,13 +217,27 @@ const UICtrl = (function() {
       </a>`
 
       document.querySelector(Selectors.exerciseItemsList).insertAdjacentElement('beforeend', li)
+    },
+
+    showTotalCalories: function(totalCal) {
+
+      const totalExerciseCalories = ExerciseCtrl.getTotalCalories();
+      const totalMealCaloires = MealCtrl.getTotalCalories();
+
+      document.querySelector(Selectors.totalCalories).textContent = totalMealCaloires - totalExerciseCalories;
+    },
+
+    getSelectors: function() {
+      return Selectors;
     }
   }
 
-})();
+})(ExerciseCtrl, MealCtrl);
 
 // App Controller
 const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
+  const Selectors = UICtrl.getSelectors()
+
   const loadEventListeners = function() {
     document.querySelector('.add-btn-meal').addEventListener('click', addMealSubmit)
     document.querySelector('.add-btn-exercise').addEventListener('click', addExerciseSubmit)
@@ -211,6 +251,10 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
 
       UICtrl.addListMeal(newMeal)
 
+      const totalCalories = MealCtrl.getTotalCalories();
+
+      UICtrl.showTotalCalories(totalCalories)
+
     }
 
     e.preventDefault()
@@ -223,9 +267,13 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
       const newExercise = ExerciseCtrl.addExercise(input.name, input.calories)
 
       UICtrl.addListExercise(newExercise)
+
+      const totalCalories = ExerciseCtrl.getTotalCalories()
+
+      UICtrl.showTotalCalories(totalCalories)
+
+
     }
-
-
   }
 
 
@@ -234,7 +282,6 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
 
       meals = MealCtrl.getMeals()
       exercise = ExerciseCtrl.getExercises()
-
 
       UICtrl.populateMealItemsList(meals)
       UICtrl.populateExerciseItemsList(exercise)
