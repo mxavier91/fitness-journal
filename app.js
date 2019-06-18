@@ -41,7 +41,37 @@ const MealCtrl = (function() {
 
       data.meals.push(newMealItem)
 
+      // console.log(data.meals.length)
+
       return newMealItem
+    },
+
+    updateMealItem: function(name, calories) {
+      calories = parseInt(calories);
+
+      let found = null
+
+      data.meals.forEach((meal) => {
+        if(meal.id === data.currentMeal.id) {
+          meal.name = name;
+          meal.calories = calories;
+          found = meal;
+        }
+      })
+
+      return found;
+    },
+
+    getItembyId: function(id) {
+      let found = null;
+
+      data.meals.forEach((meal) => {
+        if(meal.id === id) {
+          found = meal
+        }
+      })
+
+      return found;
     },
 
     getTotalCalories: function() {
@@ -54,6 +84,14 @@ const MealCtrl = (function() {
       data.totalCalories = total
 
       return data.totalCalories;
+    },
+
+    setCurrentItem: function(item) {
+      data.currentMeal = item;
+    },
+
+    getCurrentItem: function() {
+      return data.currentMeal;
     }
   }
 
@@ -96,7 +134,45 @@ const ExerciseCtrl = (function() {
 
       data.exercises.push(newExerciseItem)
 
+      // console.log(data.exercises.length)
+
       return newExerciseItem
+    },
+
+    updatedExerciseItem: function(name, calories) {
+      calories = parseInt(calories);
+
+      let found = null
+
+      data.exercises.forEach(exercise => {
+        if(exercise.id === data.currentExercise.id) {
+          exercise.name = name;
+          exercise.calories = calories;
+          found = exercise;
+        }
+      })
+
+      return found;
+    },
+
+    getItembyId: function(id) {
+      let found = null;
+
+      data.exercises.forEach(function(exercise) {
+        if(exercise.id === id) {
+          found = exercise
+        }
+      })
+
+      return found
+    },
+
+    setCurrentItem: function(item) {
+      data.currentExercise = item
+    },
+
+    getCurrentItem: function() {
+      return data.currentExercise
     },
 
     getTotalCalories: function() {
@@ -119,7 +195,8 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
   const Selectors = {
     mealItemsList: '#meal-item-list',
     exerciseItemsList: '#exercise-item-list',
-    listItems: '#item-list li',
+    mealListItems: '#meal-item-list li',
+    exerciseListItems: '#exercise-item-list li',
     addDateBtn: '.add-btn.date',
     addMealBtn: '.add-btn-meal',
     addExerciseBtn: '.add-btn-exercise',
@@ -128,7 +205,7 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
     updateExerciseBtn: '.update-btn-exercise',
     backDateBtn: '.back-btn-date',
     backMealBtn: '.back-btn-meal',
-    backExercise: '.back-btn-exercise',
+    backExerciseBtn: '.back-btn-exercise',
     deleteMealBtn: '.delete-btn-meal',
     deleteExerciseBtn: '.delete-btn-exercise',
     mealNameInput: '#meal-name',
@@ -144,7 +221,7 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
       let html = '';
 
       items.forEach((item) => {
-        html += `<li class="collection-item" id="item-${item.id}">
+        html += `<li class="collection-item meal" id="item-${item.id}">
         <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
         <a href="#" class="secondary-content">
           <i class="edit-item fas fa-pencil-alt"></i>
@@ -152,7 +229,6 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
       </li>`;
 
       document.querySelector(Selectors.mealItemsList).innerHTML = html
-      document.querySelector(Selectors.exerciseItemsList).innerHTML = html
       })
     },
 
@@ -160,7 +236,7 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
       let html = '';
 
       items.forEach((item) => {
-        html += `<li class="collection-item" id="item-${item.id}">
+        html += `<li class="collection-item exercise" id="item-${item.id}">
         <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
         <a href="#" class="secondary-content">
           <i class="edit-item fas fa-pencil-alt"></i>
@@ -186,13 +262,13 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
     },
 
     addListMeal: function(item) {
-      document.querySelector(Selectors.mealItemsList).getElementsByClassName.display = 'block';
+      document.querySelector(Selectors.mealItemsList).style.display = 'block';
 
       const li = document.createElement('li');
 
       li.className = 'collection-item';
 
-      li.id = `item-${item.id}`;
+      li.id = `meal-item-${item.id}`;
 
       li.innerHTML = `<strong>${item.name}: </strong> <em>${item.calories} Calories</em>
       <a href="#" class="secondary-content">
@@ -203,13 +279,13 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
     },
 
     addListExercise: function(item) {
-      document.querySelector(Selectors.exerciseItemsList).getElementsByClassName.display = 'block';
+      document.querySelector(Selectors.exerciseItemsList).style.display = 'block';
 
       const li = document.createElement('li');
 
       li.className = 'collection-item';
 
-      li.id = `item-${item.id}`;
+      li.id = `exercise-item-${item.id}`;
 
       li.innerHTML = `<strong>${item.name}: </strong> <em>${item.calories} Calories</em>
       <a href="#" class="secondary-content">
@@ -219,12 +295,106 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
       document.querySelector(Selectors.exerciseItemsList).insertAdjacentElement('beforeend', li)
     },
 
-    showTotalCalories: function(totalCal) {
+    updateMealListItem: function(updatedItem) {
+      let listItems = document.querySelectorAll(Selectors.mealListItems);
+
+      listItems = Array.from(listItems);
+
+      listItems.forEach((listItem) => {
+        const itemId = listItem.getAttribute('id');
+
+        if(itemId === `meal-item-${updatedItem.id}`) {
+          document.querySelector(`#${itemId}`).innerHTML = `<strong>${updatedItem.name}: </strong> <em>${updatedItem.calories} Calories</em>
+          <a href="#" class="secondary-content">
+            <i class="edit-item fas fa-pencil-alt"></i>
+          </a>`;
+
+          console.log(listItems)
+          console.log(itemId)
+        }
+      })
+    },
+
+    updateExerciseListItem: function(updatedItem) {
+      let listItems = document.querySelectorAll(Selectors.exerciseListItems);
+
+      listItems = Array.from(listItems);
+
+      listItems.forEach((listItem) => {
+        const itemId = listItem.getAttribute('id');
+
+        if(itemId === `exercise-item-${updatedItem.id}`) {
+          document.querySelector(`#${itemId}`).innerHTML = `<strong>${updatedItem.name}: </strong> <em>${updatedItem.calories} Calories</em>
+          <a href="#" class="secondary-content">
+            <i class="edit-item fas fa-pencil-alt"></i>
+          </a>`;
+
+          console.log(listItems)
+          console.log(itemId)
+        }
+      })
+    },
+
+    showTotalCalories: function() {
 
       const totalExerciseCalories = ExerciseCtrl.getTotalCalories();
       const totalMealCaloires = MealCtrl.getTotalCalories();
 
       document.querySelector(Selectors.totalCalories).textContent = totalMealCaloires - totalExerciseCalories;
+    },
+
+    hideList: function() {
+      document.querySelector(Selectors.mealItemsList).style.display = 'none'
+      document.querySelector(Selectors.exerciseItemsList).style.display = 'none'
+    },
+
+    clearInput: function() {
+      document.querySelector(Selectors.mealNameInput).value = '';
+      document.querySelector(Selectors.mealCaloriesInput).value = '';
+      document.querySelector(Selectors.exerciseNameInput).value = '';
+      document.querySelector(Selectors.exerciseCaloriesInput).value = '';
+    },
+
+    addMealItemToForm: function() {
+      document.querySelector(Selectors.mealNameInput).value = MealCtrl.getCurrentItem().name;
+      document.querySelector(Selectors.mealCaloriesInput).value = MealCtrl.getCurrentItem().calories;
+      UICtrl.showEditState()
+    },
+
+    addExerciseItemToForm: function() {
+      document.querySelector(Selectors.exerciseNameInput).value = ExerciseCtrl.getCurrentItem().name;
+      document.querySelector(Selectors.exerciseCaloriesInput).value = ExerciseCtrl.getCurrentItem().calories;
+      UICtrl.showEditState()
+    },
+
+    clearEditState: function() {
+      UICtrl.clearInput();
+      // Meal Buttons
+      document.querySelector(Selectors.addMealBtn).style.display = 'inline';
+      document.querySelector(Selectors.updateMealBtn).style.display = 'none';
+      document.querySelector(Selectors.deleteMealBtn).style.display = 'none';
+      document.querySelector(Selectors.backMealBtn).style.display = 'none';
+
+      // Exercise Buttons
+      document.querySelector(Selectors.addExerciseBtn).style.display = 'inline';
+      document.querySelector(Selectors.updateExerciseBtn).style.display = 'none';
+      document.querySelector(Selectors.deleteExerciseBtn).style.display = 'none';
+      document.querySelector(Selectors.backExerciseBtn).style.display = 'none';
+
+    },
+
+    showEditState: function() {
+      // Meal Buttons
+      document.querySelector(Selectors.addMealBtn).style.display = 'none';
+      document.querySelector(Selectors.updateMealBtn).style.display = 'inline';
+      document.querySelector(Selectors.deleteMealBtn).style.display = 'inline';
+      document.querySelector(Selectors.backMealBtn).style.display = 'inline';
+
+      // Exercise Buttons
+      document.querySelector(Selectors.addExerciseBtn).style.display = 'none';
+      document.querySelector(Selectors.updateExerciseBtn).style.display = 'inline';
+      document.querySelector(Selectors.deleteExerciseBtn).style.display = 'inline';
+      document.querySelector(Selectors.backExerciseBtn).style.display = 'inline';
     },
 
     getSelectors: function() {
@@ -239,8 +409,17 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
   const Selectors = UICtrl.getSelectors()
 
   const loadEventListeners = function() {
-    document.querySelector('.add-btn-meal').addEventListener('click', addMealSubmit)
-    document.querySelector('.add-btn-exercise').addEventListener('click', addExerciseSubmit)
+    // Add Meal/Exercise Event
+    document.querySelector(Selectors.addMealBtn).addEventListener('click', addMealSubmit)
+    document.querySelector(Selectors.addExerciseBtn).addEventListener('click', addExerciseSubmit)
+
+    // Icon Click Event
+    document.querySelector(Selectors.mealItemsList).addEventListener('click', mealEditClick)
+    document.querySelector(Selectors.exerciseItemsList).addEventListener('click', exerciseEditClick)
+
+    // Update Meal/Exercise Event
+    document.querySelector(Selectors.updateMealBtn).addEventListener('click', updateMealSubmit)
+    document.querySelector(Selectors.updateExerciseBtn).addEventListener('click', updateExerciseSubmit)
   }
 
   const addMealSubmit = function(e) {
@@ -251,10 +430,9 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
 
       UICtrl.addListMeal(newMeal)
 
-      const totalCalories = MealCtrl.getTotalCalories();
+      UICtrl.showTotalCalories()
 
-      UICtrl.showTotalCalories(totalCalories)
-
+      UICtrl.clearInput()
     }
 
     e.preventDefault()
@@ -268,23 +446,86 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
 
       UICtrl.addListExercise(newExercise)
 
-      const totalCalories = ExerciseCtrl.getTotalCalories()
+      UICtrl.showTotalCalories()
 
-      UICtrl.showTotalCalories(totalCalories)
-
-
+      UICtrl.clearInput()
     }
+
+    e.preventDefault()
+  }
+
+  const mealEditClick = function(e) {
+    if(e.target.classList.contains('edit-item')) {
+      const listid = e.target.parentNode.parentNode.id;
+
+      const listidArr = listid.split('-')
+
+      const id = parseInt(listidArr[2])
+
+      const itemToEdit = MealCtrl.getItembyId(id)
+
+      MealCtrl.setCurrentItem(itemToEdit)
+
+      UICtrl.addMealItemToForm();
+    }
+    e.preventDefault()
+  }
+
+  const exerciseEditClick = function(e) {
+    if(e.target.classList.contains('edit-item')) {
+      const listid = e.target.parentNode.parentNode.id;
+
+      const listidArr = listid.split('-')
+
+      const id = parseInt(listidArr[2])
+
+      const itemToEdit = ExerciseCtrl.getItembyId(id)
+
+      ExerciseCtrl.setCurrentItem(itemToEdit)
+
+      UICtrl.addExerciseItemToForm();
+    }
+    e.preventDefault()
+  }
+
+  const updateMealSubmit = function(e) {
+    const input = UICtrl.getMealInput()
+
+    const updatedItem = MealCtrl.updateMealItem(input.name, input.calories)
+
+    UICtrl.updateMealListItem(updatedItem)
+
+    UICtrl.showTotalCalories()
+
+    UICtrl.clearEditState()
+
+    e.preventDefault()
+  }
+
+  const updateExerciseSubmit = function(e) {
+    const input = UICtrl.getExerciseInput()
+
+    const updatedItem = ExerciseCtrl.updatedExerciseItem(input.name, input.calories)
+
+    UICtrl.updateExerciseListItem(updatedItem)
+
+    UICtrl.showTotalCalories()
+
+    UICtrl.clearEditState()
+
+    e.preventDefault()
   }
 
 
   return {
     init: function() {
+      UICtrl.clearEditState();
 
-      meals = MealCtrl.getMeals()
-      exercise = ExerciseCtrl.getExercises()
+      const meals = MealCtrl.getMeals()
+      const exercise = ExerciseCtrl.getExercises()
 
-      UICtrl.populateMealItemsList(meals)
-      UICtrl.populateExerciseItemsList(exercise)
+      UICtrl.populateMealItemsList(meals);
+      UICtrl.populateExerciseItemsList(exercise);
 
       loadEventListeners()
     }
