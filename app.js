@@ -62,6 +62,16 @@ const MealCtrl = (function() {
       return found;
     },
 
+    deleteItem: function(id) {
+      ids = data.meals.map((meal) => {
+        return meal.id;
+      });
+
+      const index = ids.indexOf(id);
+
+      data.meals.splice(index, 1);
+    },
+
     getItembyId: function(id) {
       let found = null;
 
@@ -153,6 +163,16 @@ const ExerciseCtrl = (function() {
       })
 
       return found;
+    },
+
+    deleteItem: function(id) {
+      ids = data.exercises.map((exercise) => {
+        return exercise.id;
+      });
+
+      const index = ids.indexOf(id);
+
+      data.exercises.splice(index, 1);
     },
 
     getItembyId: function(id) {
@@ -358,13 +378,25 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
     addMealItemToForm: function() {
       document.querySelector(Selectors.mealNameInput).value = MealCtrl.getCurrentItem().name;
       document.querySelector(Selectors.mealCaloriesInput).value = MealCtrl.getCurrentItem().calories;
-      UICtrl.showEditState()
+      UICtrl.showMealEditState()
     },
 
     addExerciseItemToForm: function() {
       document.querySelector(Selectors.exerciseNameInput).value = ExerciseCtrl.getCurrentItem().name;
       document.querySelector(Selectors.exerciseCaloriesInput).value = ExerciseCtrl.getCurrentItem().calories;
-      UICtrl.showEditState()
+      UICtrl.showExerciseEditState()
+    },
+
+    deleteMealListItem: function(id) {
+      const itemId = `#meal-item-${id}`;
+      const item = document.querySelector(itemId);
+      item.remove();
+    },
+
+    deleteExerciseListItem: function(id) {
+      const itemId = `#exercise-item-${id}`;
+      const item = document.querySelector(itemId);
+      item.remove();
     },
 
     clearEditState: function() {
@@ -383,13 +415,15 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
 
     },
 
-    showEditState: function() {
+    showMealEditState: function() {
       // Meal Buttons
       document.querySelector(Selectors.addMealBtn).style.display = 'none';
       document.querySelector(Selectors.updateMealBtn).style.display = 'inline';
       document.querySelector(Selectors.deleteMealBtn).style.display = 'inline';
       document.querySelector(Selectors.backMealBtn).style.display = 'inline';
+    },
 
+    showExerciseEditState: function() {
       // Exercise Buttons
       document.querySelector(Selectors.addExerciseBtn).style.display = 'none';
       document.querySelector(Selectors.updateExerciseBtn).style.display = 'inline';
@@ -420,6 +454,14 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
     // Update Meal/Exercise Event
     document.querySelector(Selectors.updateMealBtn).addEventListener('click', updateMealSubmit)
     document.querySelector(Selectors.updateExerciseBtn).addEventListener('click', updateExerciseSubmit)
+
+    // Delete Meal/Exercise Event
+    document.querySelector(Selectors.deleteMealBtn).addEventListener('click', deleteMealSubmit)
+    document.querySelector(Selectors.deleteExerciseBtn).addEventListener('click', deleteExerciseSubmit)
+
+    // Back Meal/Exercise Event
+    document.querySelector(Selectors.backMealBtn).addEventListener('click', UICtrl.clearEditState)
+    document.querySelector(Selectors.backExerciseBtn).addEventListener('click', UICtrl.clearEditState)
   }
 
   const addMealSubmit = function(e) {
@@ -510,6 +552,34 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
     UICtrl.updateExerciseListItem(updatedItem)
 
     UICtrl.showTotalCalories()
+
+    UICtrl.clearEditState()
+
+    e.preventDefault()
+  }
+
+  const deleteMealSubmit = function(e) {
+    const currMealItem = MealCtrl.getCurrentItem();
+
+    MealCtrl.deleteItem(currMealItem.id);
+
+    UICtrl.deleteMealListItem(currMealItem.id);
+
+    UICtrl.showTotalCalories()
+
+    UICtrl.clearEditState()
+
+    e.preventDefault()
+  }
+
+  const deleteExerciseSubmit = function(e) {
+    const currExerciseItem = ExerciseCtrl.getCurrentItem();
+
+    ExerciseCtrl.deleteItem(currExerciseItem.id);
+
+    UICtrl.deleteExerciseListItem(currExerciseItem.id);
+
+    UICtrl.showTotalCalories();
 
     UICtrl.clearEditState()
 
