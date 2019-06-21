@@ -12,11 +12,7 @@ const MealCtrl = (function() {
   }
 
   const data = {
-    meals: [
-      // {id: 0, name: 'Steak Dinner', calories: 1200},
-      // {id: 1, name: 'Cookie', calories: 400},
-      // {id: 2, name: 'Eggs', calories: 300}
-    ],
+    meals: [],
     currentMeal: null,
     totalCalories: 0
   }
@@ -40,8 +36,6 @@ const MealCtrl = (function() {
       newMealItem = new Meal(ID, name, calories)
 
       data.meals.push(newMealItem)
-
-      // console.log(data.meals.length)
 
       return newMealItem
     },
@@ -115,11 +109,7 @@ const ExerciseCtrl = (function() {
   }
 
   const data = {
-    exercises: [
-      // {id: 0, name: 'Running', calories: 200},
-      // {id: 1, name: 'Deadlifts', calories: 400},
-      // {id: 2, name: 'Boxing', calories: 500}
-    ],
+    exercises: [],
     currentExercise: null,
     totalCalories: 0
   }
@@ -217,13 +207,10 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
     exerciseItemsList: '#exercise-item-list',
     mealListItems: '#meal-item-list li',
     exerciseListItems: '#exercise-item-list li',
-    addDateBtn: '.add-btn.date',
     addMealBtn: '.add-btn-meal',
     addExerciseBtn: '.add-btn-exercise',
-    updateDateBtn: '.update-btn-date',
     updateMealBtn: '.update-btn-meal',
     updateExerciseBtn: '.update-btn-exercise',
-    backDateBtn: '.back-btn-date',
     backMealBtn: '.back-btn-meal',
     backExerciseBtn: '.back-btn-exercise',
     deleteMealBtn: '.delete-btn-meal',
