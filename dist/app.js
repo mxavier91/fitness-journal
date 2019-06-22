@@ -1,6 +1,52 @@
 // Storage Controller
 const StorageCtrl = (function() {
 
+
+  return {
+    // storeItem: function(item) {
+    //   let items;
+
+    //   if(localStorage.getItem('items') === null) {
+    //     items = [];
+
+    //     items.push(item)
+
+    //     localStorage.setItem('items', JSON.stringify(items))
+
+    //   } else {
+    //     items = JSON.parse(localStorage.getItem('items'))
+
+    //     items.push(item)
+
+    //     localStorage.setItem('items', JSON.stringify(items))
+    //   }
+    // },
+
+    // getMealsFromStorage: function() {
+    //   let meals;
+
+    //   if(localStorage.getItem('meals') == null) {
+    //     meals = [];
+    //   } else {
+    //     meals = JSON.parse(localStorage.getItem('meals'))
+    //   }
+
+    //   return meals
+    // },
+
+    // getExercisesFromStorage: function() {
+    //   let exercises;
+
+    //   if(localStorage.getItem('exercises') == null) {
+    //     exercises = [];
+    //   } else {
+    //     exercises = JSON.parse(localStorage.getItem('exercises'))
+    //   }
+
+    //   return exercises
+    // },
+  }
+
 })();
 
 // Meal Controller
@@ -11,8 +57,21 @@ const MealCtrl = (function() {
     this.calories = calories
   }
 
+  const getMealsFromStorage = function() {
+    let meals;
+
+    if(localStorage.getItem('meals') == null) {
+      meals = [];
+    } else {
+      meals = JSON.parse(localStorage.getItem('meals'))
+    }
+
+    return meals
+  }
+
   const data = {
-    meals: [],
+    // meals: [],
+    meals: getMealsFromStorage(),
     currentMeal: null,
     totalCalories: 0
   }
@@ -23,7 +82,7 @@ const MealCtrl = (function() {
     },
 
     addMeal: function(name, calories) {
-      let ID 
+      let ID
 
       if(data.meals.length > 0) {
         ID = data.meals[data.meals.length -1].id + 1;
@@ -64,6 +123,25 @@ const MealCtrl = (function() {
       const index = ids.indexOf(id);
 
       data.meals.splice(index, 1);
+    },
+
+    storeMealItem: function(meal) {
+      let meals;
+
+      if(localStorage.getItem('meals') === null) {
+        meals = [];
+
+        meals.push(meal)
+
+        localStorage.setItem('meals', JSON.stringify(meals))
+
+      } else {
+        meals = JSON.parse(localStorage.getItem('meals'))
+
+        meals.push(item)
+
+        localStorage.setItem('meals', JSON.stringify(meals))
+      }
     },
 
     getItembyId: function(id) {
@@ -108,8 +186,21 @@ const ExerciseCtrl = (function() {
     this.calories = calories;
   }
 
+  const getExercisesFromStorage = function() {
+    let exercises;
+
+    if(localStorage.getItem('exercises') === null) {
+      exercises = [];
+    } else {
+      exercises = JSON.parse(localStorage.getItem('exercises'))
+    }
+
+    return exercises
+  }
+
   const data = {
-    exercises: [],
+    // exercises: [],
+    exercises: getExercisesFromStorage(),
     currentExercise: null,
     totalCalories: 0
   }
@@ -163,6 +254,25 @@ const ExerciseCtrl = (function() {
       const index = ids.indexOf(id);
 
       data.exercises.splice(index, 1);
+    },
+
+    storeExerciseItem: function(exercise) {
+      let exercises;
+
+      if(localStorage.getItem('exercises') === null) {
+        exercises = [];
+
+        exercises.push(exercise)
+
+        localStorage.setItem('exercises', JSON.stringify(exercises))
+
+      } else {
+        exercises = JSON.parse(localStorage.getItem('exercises'))
+
+        exercises.push(exercise)
+
+        localStorage.setItem('exercises', JSON.stringify(exercises))
+      }
     },
 
     getItembyId: function(id) {
@@ -426,7 +536,7 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
 })(ExerciseCtrl, MealCtrl);
 
 // App Controller
-const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
+const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
   const Selectors = UICtrl.getSelectors()
 
   const loadEventListeners = function() {
@@ -462,6 +572,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
       UICtrl.showTotalCalories()
 
       UICtrl.clearInput()
+
+      MealCtrl.storeMealItem(newMeal)
     }
 
     e.preventDefault()
@@ -478,6 +590,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
       UICtrl.showTotalCalories()
 
       UICtrl.clearInput()
+
+      ExerciseCtrl.storeExerciseItem(newExercise)
     }
 
     e.preventDefault()
@@ -527,6 +641,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
     UICtrl.showTotalCalories()
 
     UICtrl.clearEditState()
+
+    StorageCtrl.updateStorageItem(updatedItem)
 
     e.preventDefault()
   }
@@ -584,10 +700,12 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
       UICtrl.populateMealItemsList(meals);
       UICtrl.populateExerciseItemsList(exercise);
 
+      UICtrl.showTotalCalories()
+
       loadEventListeners()
     }
   }
 
-})(UICtrl, ExerciseCtrl, MealCtrl);
+})(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl);
 
 AppCtrl.init()
