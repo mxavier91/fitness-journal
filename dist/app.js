@@ -1,54 +1,3 @@
-// Storage Controller
-const StorageCtrl = (function() {
-
-
-  return {
-    // storeItem: function(item) {
-    //   let items;
-
-    //   if(localStorage.getItem('items') === null) {
-    //     items = [];
-
-    //     items.push(item)
-
-    //     localStorage.setItem('items', JSON.stringify(items))
-
-    //   } else {
-    //     items = JSON.parse(localStorage.getItem('items'))
-
-    //     items.push(item)
-
-    //     localStorage.setItem('items', JSON.stringify(items))
-    //   }
-    // },
-
-    // getMealsFromStorage: function() {
-    //   let meals;
-
-    //   if(localStorage.getItem('meals') == null) {
-    //     meals = [];
-    //   } else {
-    //     meals = JSON.parse(localStorage.getItem('meals'))
-    //   }
-
-    //   return meals
-    // },
-
-    // getExercisesFromStorage: function() {
-    //   let exercises;
-
-    //   if(localStorage.getItem('exercises') == null) {
-    //     exercises = [];
-    //   } else {
-    //     exercises = JSON.parse(localStorage.getItem('exercises'))
-    //   }
-
-    //   return exercises
-    // },
-  }
-
-})();
-
 // Meal Controller
 const MealCtrl = (function() {
   const Meal = function(id, name, calories) {
@@ -155,6 +104,17 @@ const MealCtrl = (function() {
       localStorage.setItem('meals', JSON.stringify(meals))
     },
 
+    deleteMealFromStorage: function(id) {
+      let meals = JSON.parse(localStorage.getItem('meals'));
+
+      meals.forEach(function(meal, index) {
+        if (id === meal.id) {
+          meals.splice(index, 1)
+        }
+      });
+      localStorage.setItem('meals', JSON.stringify(meals));
+    },
+
     getItembyId: function(id) {
       let found = null;
 
@@ -210,7 +170,6 @@ const ExerciseCtrl = (function() {
   }
 
   const data = {
-    // exercises: [],
     exercises: getExercisesFromStorage(),
     currentExercise: null,
     totalCalories: 0
@@ -235,8 +194,6 @@ const ExerciseCtrl = (function() {
       newExerciseItem = new Exercise(ID, name, calories)
 
       data.exercises.push(newExerciseItem)
-
-      // console.log(data.exercises.length)
 
       return newExerciseItem
     },
@@ -297,6 +254,17 @@ const ExerciseCtrl = (function() {
       localStorage.setItem('exercises', JSON.stringify(exercises))
     },
 
+    deleteExerciseFromStorage: function(id) {
+      let exercises = JSON.parse(localStorage.getItem('exercises'));
+
+      exercises.forEach(function(exercise, index) {
+        if (id === exercise.id) {
+          exercises.splice(index, 1)
+        }
+      });
+      localStorage.setItem('exercises', JSON.stringify(exercises));
+    },
+
     getItembyId: function(id) {
       let found = null;
 
@@ -332,7 +300,6 @@ const ExerciseCtrl = (function() {
 
 })();
 
-// UI Controller
 const UICtrl = (function(ExerciseCtrl, MealCtrl) {
   const Selectors = {
     mealItemsList: '#meal-item-list',
@@ -447,9 +414,6 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
           <a href="#" class="secondary-content">
             <i class="edit-item fas fa-pencil-alt"></i>
           </a>`;
-
-          console.log(listItems)
-          console.log(itemId)
         }
       })
     },
@@ -467,9 +431,6 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
           <a href="#" class="secondary-content">
             <i class="edit-item fas fa-pencil-alt"></i>
           </a>`;
-
-          console.log(listItems)
-          console.log(itemId)
         }
       })
     },
@@ -520,13 +481,11 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
 
     clearEditState: function() {
       UICtrl.clearInput();
-      // Meal Buttons
       document.querySelector(Selectors.addMealBtn).style.display = 'inline';
       document.querySelector(Selectors.updateMealBtn).style.display = 'none';
       document.querySelector(Selectors.deleteMealBtn).style.display = 'none';
       document.querySelector(Selectors.backMealBtn).style.display = 'none';
 
-      // Exercise Buttons
       document.querySelector(Selectors.addExerciseBtn).style.display = 'inline';
       document.querySelector(Selectors.updateExerciseBtn).style.display = 'none';
       document.querySelector(Selectors.deleteExerciseBtn).style.display = 'none';
@@ -535,7 +494,6 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
     },
 
     showMealEditState: function() {
-      // Meal Buttons
       document.querySelector(Selectors.addMealBtn).style.display = 'none';
       document.querySelector(Selectors.updateMealBtn).style.display = 'inline';
       document.querySelector(Selectors.deleteMealBtn).style.display = 'inline';
@@ -543,7 +501,6 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
     },
 
     showExerciseEditState: function() {
-      // Exercise Buttons
       document.querySelector(Selectors.addExerciseBtn).style.display = 'none';
       document.querySelector(Selectors.updateExerciseBtn).style.display = 'inline';
       document.querySelector(Selectors.deleteExerciseBtn).style.display = 'inline';
@@ -557,28 +514,26 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
 
 })(ExerciseCtrl, MealCtrl);
 
-// App Controller
-const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
+const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
   const Selectors = UICtrl.getSelectors()
 
   const loadEventListeners = function() {
-    // Add Meal/Exercise Event
     document.querySelector(Selectors.addMealBtn).addEventListener('click', addMealSubmit)
     document.querySelector(Selectors.addExerciseBtn).addEventListener('click', addExerciseSubmit)
 
-    // Icon Click Event
+    
     document.querySelector(Selectors.mealItemsList).addEventListener('click', mealEditClick)
     document.querySelector(Selectors.exerciseItemsList).addEventListener('click', exerciseEditClick)
 
-    // Update Meal/Exercise Event
+    
     document.querySelector(Selectors.updateMealBtn).addEventListener('click', updateMealSubmit)
     document.querySelector(Selectors.updateExerciseBtn).addEventListener('click', updateExerciseSubmit)
 
-    // Delete Meal/Exercise Event
+    
     document.querySelector(Selectors.deleteMealBtn).addEventListener('click', deleteMealSubmit)
     document.querySelector(Selectors.deleteExerciseBtn).addEventListener('click', deleteExerciseSubmit)
 
-    // Back Meal/Exercise Event
+    
     document.querySelector(Selectors.backMealBtn).addEventListener('click', UICtrl.clearEditState)
     document.querySelector(Selectors.backExerciseBtn).addEventListener('click', UICtrl.clearEditState)
   }
@@ -620,7 +575,7 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
   }
 
   const mealEditClick = function(e) {
-    console.log(e.target)
+    
     if(e.target.classList.contains('edit-item')) {
       const listid = e.target.parentNode.parentNode.id;
 
@@ -695,6 +650,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
 
     UICtrl.showTotalCalories()
 
+    MealCtrl.deleteMealFromStorage(currMealItem.id)
+
     UICtrl.clearEditState()
 
     e.preventDefault()
@@ -708,6 +665,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
     UICtrl.deleteExerciseListItem(currExerciseItem.id);
 
     UICtrl.showTotalCalories();
+    
+    ExerciseCtrl.deleteExerciseFromStorage(currExerciseItem.id)
 
     UICtrl.clearEditState()
 
@@ -727,12 +686,10 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
 
       UICtrl.showTotalCalories()
 
-      console.log(meals)
-
       loadEventListeners()
     }
   }
 
-})(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl);
+})(UICtrl, ExerciseCtrl, MealCtrl);
 
 AppCtrl.init()
