@@ -60,7 +60,7 @@ const MealCtrl = (function() {
   const getMealsFromStorage = function() {
     let meals;
 
-    if(localStorage.getItem('meals') == null) {
+    if(localStorage.getItem('meals') === null) {
       meals = [];
     } else {
       meals = JSON.parse(localStorage.getItem('meals'))
@@ -70,7 +70,7 @@ const MealCtrl = (function() {
   }
 
   const data = {
-    // meals: [],
+    meals: [],
     meals: getMealsFromStorage(),
     currentMeal: null,
     totalCalories: 0
@@ -138,10 +138,21 @@ const MealCtrl = (function() {
       } else {
         meals = JSON.parse(localStorage.getItem('meals'))
 
-        meals.push(item)
+        meals.push(meal)
 
         localStorage.setItem('meals', JSON.stringify(meals))
       }
+    },
+
+    updateMealStorage: function(updatedItem) {
+      let meals = JSON.parse(localStorage.getItem('meals'));
+
+      meals.forEach(function(meal, index) {
+        if(updatedItem.id === meal.id) {
+          meals.splice(index, 1, updatedItem)
+        }
+      });
+      localStorage.setItem('meals', JSON.stringify(meals))
     },
 
     getItembyId: function(id) {
@@ -275,6 +286,17 @@ const ExerciseCtrl = (function() {
       }
     },
 
+    updateExerciseStorage: function(updatedItem) {
+      let exercises = JSON.parse(localStorage.getItem('exercises'));
+
+      exercises.forEach(function(exercise, index) {
+        if(updatedItem.id === exercise.id) {
+          exercises.splice(index, 1, updatedItem)
+        }
+      });
+      localStorage.setItem('exercises', JSON.stringify(exercises))
+    },
+
     getItembyId: function(id) {
       let found = null;
 
@@ -338,7 +360,7 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
       let html = '';
 
       items.forEach((item) => {
-        html += `<li class="collection-item meal" id="item-${item.id}">
+        html += `<li class="collection-item meal" id="meal-item-${item.id}">
         <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
         <a href="#" class="secondary-content">
           <i class="edit-item fas fa-pencil-alt"></i>
@@ -353,7 +375,7 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
       let html = '';
 
       items.forEach((item) => {
-        html += `<li class="collection-item exercise" id="item-${item.id}">
+        html += `<li class="collection-item exercise" id="exercise-item-${item.id}">
         <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
         <a href="#" class="secondary-content">
           <i class="edit-item fas fa-pencil-alt"></i>
@@ -598,6 +620,7 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
   }
 
   const mealEditClick = function(e) {
+    console.log(e.target)
     if(e.target.classList.contains('edit-item')) {
       const listid = e.target.parentNode.parentNode.id;
 
@@ -642,7 +665,7 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
 
     UICtrl.clearEditState()
 
-    StorageCtrl.updateStorageItem(updatedItem)
+    MealCtrl.updateMealStorage(updatedItem)
 
     e.preventDefault()
   }
@@ -657,6 +680,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
     UICtrl.showTotalCalories()
 
     UICtrl.clearEditState()
+
+    ExerciseCtrl.updateExerciseStorage(updatedItem)
 
     e.preventDefault()
   }
@@ -701,6 +726,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl, StorageCtrl) {
       UICtrl.populateExerciseItemsList(exercise);
 
       UICtrl.showTotalCalories()
+
+      console.log(meals)
 
       loadEventListeners()
     }
