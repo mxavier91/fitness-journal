@@ -479,6 +479,34 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
       item.remove();
     },
 
+    showAlert: function(message, className) {
+      this.clearAlert()
+
+      const div = document.createElement('div');
+
+      div.className = className;
+
+      div.appendChild(document.createTextNode(message));
+
+      const container = document.querySelector('.post-container');
+
+      const calories = document.querySelector('#calories')
+
+      container.insertBefore(div, calories)
+
+      setTimeout(() => {
+        this.clearAlert()
+      }, 1000)
+    },
+
+    clearAlert: function() {
+      const currentAlert = document.querySelector('.card-panel');
+
+      if(currentAlert) {
+        currentAlert.remove()
+      }
+    },
+
     clearEditState: function() {
       UICtrl.clearInput();
       document.querySelector(Selectors.addMealBtn).style.display = 'inline';
@@ -551,6 +579,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
       UICtrl.clearInput()
 
       MealCtrl.storeMealItem(newMeal)
+    } else {
+      UICtrl.showAlert('Please fill in all fields', 'white-text card-panel center red')
     }
 
     e.preventDefault()
@@ -569,6 +599,8 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
       UICtrl.clearInput()
 
       ExerciseCtrl.storeExerciseItem(newExercise)
+    } else {
+      UICtrl.showAlert('Please fill in on the fields', 'white-text card-panel center red')
     }
 
     e.preventDefault()
@@ -612,7 +644,10 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
   const updateMealSubmit = function(e) {
     const input = UICtrl.getMealInput()
 
-    const updatedItem = MealCtrl.updateMealItem(input.name, input.calories)
+    if(input.name === '' || input.calories === '') {
+      UICtrl.showAlert('Please fill in all fields', 'white-text card-panel center red')
+    } else {
+      const updatedItem = MealCtrl.updateMealItem(input.name, input.calories)
 
     UICtrl.updateMealListItem(updatedItem)
 
@@ -621,12 +656,19 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
     UICtrl.clearEditState()
 
     MealCtrl.updateMealStorage(updatedItem)
+    }
 
     e.preventDefault()
   }
 
   const updateExerciseSubmit = function(e) {
     const input = UICtrl.getExerciseInput()
+    
+    if(input.name === '' || input.calories === '') {
+
+      UICtrl.showAlert('Please fill in all fields', 'white-text card-panel center red')
+
+    } else {
 
     const updatedItem = ExerciseCtrl.updatedExerciseItem(input.name, input.calories)
 
@@ -637,6 +679,7 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
     UICtrl.clearEditState()
 
     ExerciseCtrl.updateExerciseStorage(updatedItem)
+    }
 
     e.preventDefault()
   }
@@ -693,3 +736,4 @@ const AppCtrl = (function(UICtrl, ExerciseCtrl, MealCtrl) {
 })(UICtrl, ExerciseCtrl, MealCtrl);
 
 AppCtrl.init()
+
