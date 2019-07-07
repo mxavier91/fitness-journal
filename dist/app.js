@@ -496,7 +496,7 @@ const UICtrl = (function(ExerciseCtrl, MealCtrl) {
 
       setTimeout(() => {
         this.clearAlert()
-      }, 1000)
+      }, 3000)
     },
 
     clearAlert: function() {
